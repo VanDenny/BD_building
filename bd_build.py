@@ -116,12 +116,15 @@ class BD_Build_clawer(Clawer):
                     print(part)
                     if isinstance(part, list) and len(part) == 6:
                         build_info = {}
-                        base_point = part[0][1]
                         point_list = []
-                        for point in part[0][1:]:
-                            point[0] = point[0] + base_point[0]
-                            point[1] = point[1] + base_point[1]
+                        part[0][0][0] = 129 + part[0][0][0]
+                        part[0][0][1] = 129 + part[0][0][1]
+                        for ord, point in enumerate(part[0]):
+                            if ord >= 1:
+                                point[0] = point[0] + last_point[0]
+                                point[1] = point[1] + last_point[1]
                             point_list.append(point)
+                            last_point = point
                         point_list.append(point_list[0])
                         build_info['geo'] = point_list
                         build_info['id'] = part[1]
@@ -137,7 +140,7 @@ class BD_Build_clawer(Clawer):
 
 
 if __name__ == "__main__":
-    bdbuild_clawer = BD_Build_clawer(r'https://ss3.bdstatic.com/8bo_dTSlR1gBo1vgoIiO_jowehsv/pvd/?qt=tile&param=9BA%3BF96K5%3C%40%3B8A6PE4%3E3D92J4%3EPCO86N4%3ENMFA7H8%3CNKO%403H4%3EN3O82E88M%3BO86E8JL%3D%3F%3F7L5L%403B6KKH8J%3D%3E%3EGK5L%3EC8%40JPE2%403J6KLH%3AO3O8%3AJ54%403B8FJE%3E2')
+    bdbuild_clawer = BD_Build_clawer(r'https://ss0.bdstatic.com/8bo_dTSlR1gBo1vgoIiO_jowehsv/pvd/?qt=tile&param=3N5L%3F3K8%3AL5D%3BEK9FJE2%3ECI8FE9FA%3BC92E98O5K%3FCDI8A%3DB%3FBE92A%3BB6KCHLA%3BC6KH8DM%3D%3B%40BPEB%3E38%40JPE2%403J6KLH%3AO3O8%3AJ54%403B8FJE%3E4')
     res_list = bdbuild_clawer.process()
     print(res_list)
     num = len(res_list)
@@ -154,8 +157,8 @@ if __name__ == "__main__":
         shape_writer.plot(points,(i['id'], i['fe_2'], i['height'], i['fe_4'], i['code']))
     shape_writer.save(r'D:\program_lib\BD_Building\test_shape')
 
-    # df = pd.DataFrame(res_dict)
-    # df.to_csv('a_test.csv')
+    df = pd.DataFrame(res_list)
+    df.to_csv('a_test.csv')
     # print(df)
     # monitor = Monitor()
     # monitor.start()
