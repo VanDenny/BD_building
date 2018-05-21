@@ -12,7 +12,22 @@ import time
 #     enlarge_element.click()
 # time.sleep(1)
 # print(pag.size())
-for i in range(10):
-    pag.moveTo(10, 950, 0.5)
-    pag.dragTo(265, 950, 1)
+def drag_left(n):
+    for i in range(n):
+        pag.moveTo(20, 150, 0.5)
+        pag.dragTo(275, 150, 1)
+
+def drag_right(n):
+    for i in range(n):
+        pag.moveTo(275, 150, 0.5)
+        pag.dragTo(20, 150, 1)
+
+def drag_down(n):
+    for i in range(n):
+        pag.moveTo(10, 200, 0.5)
+        pag.dragTo(10, 150, 1)
+
+
+if __name__ == "__main__":
+    drag_left(10)
 
