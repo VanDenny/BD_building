@@ -1,5 +1,6 @@
 """step 1 导入依赖库"""
 from os import path
+import pyautogui as pag
 from browsermobproxy import Server
 from selenium import webdriver
 import re
@@ -8,6 +9,7 @@ from Clawer_Base.user_agents import User_agents
 import pandas as pd
 from Clawer_Base.shape_io import Shapefile_Write
 from Clawer_Base.progress_bar import view_bar
+import time
 import json
 
 """step 2 新建浏览器监控类"""
@@ -135,12 +137,48 @@ class BD_Build_clawer(Clawer):
                         res_list.append(build_info)
         return res_list
 
+class get_url:
+    def __init__(self, url):
+        self.driver = webdriver.Chrome()
+        self.url = url
+        self.PROXY_PATH =
+
+    def open_web(self, win_size=(800,800)):
+        self.driver.set_window_size(*win_size)
+        self.driver.get(self.url)
+
+    def win_setting(self):
+        enlarge_element = self.driver.find_element_by_xpath("//div[@class='BMap_smcbg in']")
+        for i in range(6):
+            time.sleep(1)
+            enlarge_element.click()
+
+    def initProxy(self):
+        """
+        step 4 初始化 browermobproxy
+        设置需要屏蔽的网络连接，此处屏蔽了css，和图片（有时chrome的设置会失效），可加快网页加载速度
+        新建proxy代理地址
+        """
+        self.server = Server(self.PROXY_PATH)
+        self.server.start()
+        self.proxy = self.server.create_proxy()
+
+    def initWeb(self):
+        self.open_web()
+        self.win_setting()
+
+    def move(self, x_offset, y_offset):
+        
+
+
+
+
 
 
 
 
 if __name__ == "__main__":
-    bdbuild_clawer = BD_Build_clawer(r'https://ss0.bdstatic.com/8bo_dTSlR1gBo1vgoIiO_jowehsv/pvd/?qt=tile&param=3N5L%3F3K8%3AL5D%3BEK9FJE2%3ECI8FE9FA%3BC92E98O5K%3FCDI8A%3DB%3FBE92A%3BB6KCHLA%3BC6KH8DM%3D%3B%40BPEB%3E38%40JPE2%403J6KLH%3AO3O8%3AJ54%403B8FJE%3E4')
+    bdbuild_clawer = BD_Build_clawer(r'https://ss3.bdstatic.com/8bo_dTSlR1gBo1vgoIiO_jowehsv/pvd/?qt=tile&param=3N5L%40%3BJ8FLE%3A%3BEK9FK52%3F3J96E9FA%3BC96E98O5K%3FCDI8A%3DB%3FBE92A%3BB6KCHLA%3BC6KH8DM%3D%3B%40BPEB%3E38%40JPE2%403J6KLH%3AO3O8%3AJ54%403B8FJE%3E4')
     res_list = bdbuild_clawer.process()
     print(res_list)
     num = len(res_list)
