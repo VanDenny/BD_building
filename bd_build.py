@@ -122,8 +122,8 @@ class BD_Build_clawer(Clawer):
                     if isinstance(part, list) and len(part) == 6:
                         build_info = {}
                         point_list = []
-                        part[0][0][0] = 129 + part[0][0][0]
-                        part[0][0][1] = 129 + part[0][0][1]
+                        part[0][0][0] = 129 + part[0][0][0] + (self.x_col*2560)
+                        part[0][0][1] = 129 + part[0][0][1] + (self.y_row*2560)
                         for ord, point in enumerate(part[0]):
                             if ord >= 1:
                                 point[0] = point[0] + last_point[0]
@@ -276,7 +276,7 @@ class BdbuildShper:
     def convert_to_shp(self):
         shape_writer = Shapefile_Write('ploygon', [('id', 'C'),
                                                    ('fe_2', 'C'),
-                                                   ('height', 'C'),
+                                                   ('height', 'N', 4, 2),
                                                    ('fe_4', 'C'),
                                                    ('code', 'C'),
                                                    ])
