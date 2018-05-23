@@ -130,7 +130,8 @@ class BD_Build_clawer(Clawer):
                                 point[1] = point[1] + last_point[1]
                             point_list.append(point)
                             last_point = point
-                        point_list.append(point_list[0])
+                        # 是否需要加载第一点
+                        # point_list.append(point_list[0])
                         build_info['geo'] = point_list
                         build_info['id'] = part[1]
                         build_info['fe_2'] = part[2]
@@ -177,7 +178,7 @@ class Get_url:
 
 
 
-    def move(self, x_offset, y_offset):
+    def move(self, x_offset, y_offset, mode_str):
 
         def drag_left(n):
             for i in range(n):
@@ -194,15 +195,63 @@ class Get_url:
                 pag.moveTo(20, 406, 0.5)
                 pag.dragTo(20, 150, 1)
 
+        def drag_up(n):
+            for i in range(n):
+                pag.moveTo(20, 150, 0.5)
+                pag.dragTo(20, 406, 1)
+
+        def up_left_rect(x_n, y_n):
+            for down_n in range(y_n):
+                if (down_n % 2) == 0:
+                    drag_left(x_n)
+                    print('向左移动')
+                else:
+                    drag_right(x_n)
+                drag_up(1)
+
+        def up_right_rect(x_n, y_n):
+            for down_n in range(y_n):
+                if (down_n % 2) == 0:
+                    drag_right(x_n)
+                    print('向右移动')
+                else:
+                    drag_left(x_n)
+                drag_up(1)
+
+        def down_left_rect(x_n, y_n):
+            for down_n in range(y_n):
+                if (down_n % 2) == 0:
+                    drag_left(x_n)
+                    print('向左移动')
+                else:
+                    drag_right(x_n)
+                drag_down(1)
+
+        def down_right_rect(x_n, y_n):
+            for down_n in range(y_n):
+                if (down_n % 2) == 0:
+                    drag_right(x_n)
+                    print('向右移动')
+                else:
+                    drag_left(x_n)
+                drag_down(1)
+
+
         x_n = int(x_offset/256)
         y_n = int(y_offset/256)
-        for down_n in range(y_n):
-            if (down_n % 2) == 0:
-                drag_right(x_n)
-                print('向右移动')
-            else:
-                drag_left(x_n)
-            drag_down(1)
+        if mode_str == 'up_left':
+            up_left_rect(x_n, y_n)
+        elif mode_str == 'up_right':
+            up_right_rect(x_n, y_n)
+        elif mode_str == 'down_left':
+            down_left_rect(x_n, y_n)
+        else:
+            down_right_rect(x_n, y_n)
+
+
+
+
+
 
     def start(self):
             """step 8 配置monitor的启动顺序"""
@@ -212,7 +261,11 @@ class Get_url:
                 print('初始化完成')
                 self.proxy.new_har('monitor', options={'captureContent': True})
                 time.sleep(2)
-                self.move(2560, 2560)
+                next_step = 'down_right'
+                while next_step in ['up_left', 'up_right', 'down_left', 'down_right']:
+                    self.move(2560, 2560, next_step)
+                    # 每次采集完，需调整地图回到采集原点，缩放比例尺为50米
+                    next_step = input('输入采集模式（up_left/up_right/down_left/down_right）:')
 
             except Exception as err:
                 print(err)
@@ -294,18 +347,20 @@ class BdbuildShper:
 
 
 if __name__ == "__main__":
-    bdbuildshper = BdbuildShper('a_res.xlsx')
-    bdbuildshper.convert_to_shp()
+    # 转换成shp代码
+    # bdbuildshper = BdbuildShper('b_res.xlsx')
+    # bdbuildshper.convert_to_shp()
 
-    # bdurl = Get_url(r'https://map.baidu.com/')
-    # bdurl.start()
-    # req_urls = bdurl.get_req_url(".*/pvd/\?qt=tile&param=.*")
-    # bdurl.quit()
-    # df = pd.DataFrame(req_urls)
-    # df.to_excel('a_res.xlsx')
+    # 抓取url代码
+    bdurl = Get_url(r'https://map.baidu.com/')
+    bdurl.start()
+    req_urls = bdurl.get_req_url(".*/pvd/\?qt=tile&param=.*")
+    bdurl.quit()
+    df = pd.DataFrame(req_urls)
+    df.to_excel('b_res.xlsx')
 
-    # with open('1.har', 'w') as outfile:
-    #     outfile.write(req_urls)
+    with open('1.har', 'w') as outfile:
+        outfile.write(req_urls)
 
 
     # # 转 shapefile 代码
